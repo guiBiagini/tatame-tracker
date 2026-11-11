@@ -33,15 +33,32 @@ export interface ProviderAdapter {
   fetchFights?(ref: EventRef, competitor: Competitor, http: Http): Promise<Fight[]>;
 }
 
+const RETRY_STATUS = new Set([429, 502, 503, 504]);
+const MAX_RETRIES = 5;
+
+export const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/**
+ * `fetch` com nova tentativa quando o site limita requisições (429) ou está
+ * instável (5xx): respeita `Retry-After` e, sem ele, espera 2s, 4s, 8s...
+ */
+async function politeFetch(url: string): Promise<Response> {
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(url, { credentials: 'omit' });
+    if (res.ok) return res;
+    if (!RETRY_STATUS.has(res.status) || attempt >= MAX_RETRIES) {
+      throw new Error(`HTTP ${res.status} em ${url}`);
+    }
+    const retryAfter = Number(res.headers.get('retry-after'));
+    await sleep(retryAfter > 0 ? Math.min(retryAfter, 60) * 1000 : 2000 * 2 ** attempt);
+  }
+}
+
 export const browserHttp: Http = {
   async text(url) {
-    const res = await fetch(url, { credentials: 'omit' });
-    if (!res.ok) throw new Error(`HTTP ${res.status} em ${url}`);
-    return res.text();
+    return (await politeFetch(url)).text();
   },
   async json<T>(url: string) {
-    const res = await fetch(url, { credentials: 'omit' });
-    if (!res.ok) throw new Error(`HTTP ${res.status} em ${url}`);
-    return (await res.json()) as T;
+    return (await (await politeFetch(url)).json()) as T;
   },
 };

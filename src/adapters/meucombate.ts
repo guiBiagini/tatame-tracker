@@ -1,4 +1,4 @@
-import type { ProviderAdapter } from '../core/adapter';
+import { sleep, type ProviderAdapter } from '../core/adapter';
 import { epochToDate } from '../core/dates';
 import type { Competitor } from '../core/model';
 
@@ -15,6 +15,8 @@ import type { Competitor } from '../core/model';
 
 const API = 'https://api.meucombate.com.br/api:uxixvP46';
 const MAX_PAGES = 200;
+/** A API limita requisições em rajada; espaçar as páginas evita o HTTP 429. */
+const PAGE_DELAY_MS = 400;
 
 interface MCEvent {
   id: number;
@@ -67,6 +69,7 @@ export const meuCombateAdapter: ProviderAdapter = {
     const competitors: Competitor[] = [];
     let page: number | null = 1;
     for (let i = 0; page && i < MAX_PAGES; i++) {
+      if (i > 0) await sleep(PAGE_DELAY_MS);
       const data: MCPage<MCCategory> = await http.json<MCPage<MCCategory>>(
         `${API}/event/athletes?page=${page}&event_id=${ref.externalId}&search_academy=&search_athletes_id=`,
       );
