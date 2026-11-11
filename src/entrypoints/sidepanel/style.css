@@ -1,0 +1,221 @@
+:root {
+  --bg: #f7f7f8;
+  --card: #ffffff;
+  --text: #1c1c1f;
+  --muted: #6b6b75;
+  --border: #e3e3e8;
+  --accent: #1f5fd1;
+  --ok: #1e8a4c;
+  --warn: #b26a00;
+  --error: #c62828;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17171a;
+    --card: #222227;
+    --text: #ececf0;
+    --muted: #9a9aa5;
+    --border: #34343b;
+    --accent: #6c9bff;
+    --ok: #4cc27f;
+    --warn: #e0a040;
+    --error: #ff6b6b;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.45 system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+main {
+  padding: 12px;
+}
+
+h1 {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+
+h2 {
+  font-size: 15px;
+  margin: 0 0 2px;
+}
+
+nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+nav button {
+  flex: 1;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+nav button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+button {
+  font: inherit;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+button.link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  padding: 0;
+}
+
+input,
+textarea {
+  width: 100%;
+  font: inherit;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--text);
+  margin: 4px 0 8px;
+}
+
+.row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.row input {
+  margin: 0;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.meta,
+.muted {
+  color: var(--muted);
+}
+
+.meta {
+  font-size: 12px;
+  margin: 0 0 8px;
+}
+
+.small {
+  font-size: 12px;
+}
+
+.error {
+  color: var(--error);
+  font-size: 12px;
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+  margin-top: 32px;
+}
+
+.entry {
+  border-top: 1px solid var(--border);
+  padding: 8px 0;
+}
+
+.entry.status-scheduled {
+  border-left: 3px solid var(--ok);
+  padding-left: 8px;
+}
+
+.entry.possible {
+  border-left: 3px solid var(--warn);
+  padding-left: 8px;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  margin-top: 4px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--muted);
+}
+
+.fight {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin-top: 4px;
+}
+
+.fight .mat {
+  font-weight: 600;
+  color: var(--ok);
+}
+
+.fight .time {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+}
+
+.list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.list a {
+  color: var(--text);
+}
+
+details summary {
+  cursor: pointer;
+  color: var(--warn);
+  font-size: 12px;
+  margin-top: 8px;
+}
