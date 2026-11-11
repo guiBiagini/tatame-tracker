@@ -55,6 +55,7 @@ function FightsTab(props: {
     .map((e) => snapshots[e.id])
     .filter((s): s is EventSnapshot => !!s)
     .sort((a, b) => (a.date ?? '9').localeCompare(b.date ?? '9'));
+  const pending = events.filter((e) => !snapshots[e.id]);
 
   if (!athletes.length || !events.length) {
     return (
@@ -84,6 +85,12 @@ function FightsTab(props: {
       </div>
       {ordered.map((snap) => (
         <EventCard key={snap.eventId} snapshot={snap} athletes={athletes} />
+      ))}
+      {pending.map((event) => (
+        <article key={event.id} className="card">
+          <h2>{event.name}</h2>
+          <p className="meta">{busy ? 'Consultando…' : 'Ainda não consultado. Clique em "Atualizar tudo".'}</p>
+        </article>
       ))}
     </section>
   );

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tatame Tracker — demonstração</title>
+  </head>
+  <body class="demo">
+    <div class="demo-page">
+      <p class="demo-note">
+        Simulação do <b>painel lateral</b> da extensão (no Chrome ele abre ao lado do site, com ~380px).
+        O Mundial CBJJE é consultado <b>de verdade</b>; o evento IBJJF é fictício, para mostrar tatame e horário.
+        <button id="reset">Restaurar exemplo</button>
+      </p>
+      <div class="demo-panel"><div id="root"></div></div>
+    </div>
+    <div id="toasts"></div>
+    <script type="module" src="./main.tsx"></script>
+  </body>
+</html>

@@ -58,9 +58,24 @@ export function nameScore(query: string, candidate: string): number {
   }
   const coverage = hits / short.length;
 
-  if (firstOk && lastOk) return 0.75 + 0.2 * coverage;
-  if (firstOk || lastOk) return 0.3 + 0.4 * coverage;
+  if (firstOk && lastOk) {
+    // "João P. Silva" x "João Henrique Santos Silva": os dois lados têm nome
+    // do meio e nenhum combina → outra pessoa com o mesmo nome e sobrenome.
+    return middleConflict(q, c) ? 0.5 : 0.75 + 0.2 * coverage;
+  }
+  // Só o primeiro nome bate: é possível apenas se um dos nomes estiver
+  // incompleto ("João Pedro" no site). Sobrenomes diferentes = outra pessoa.
+  if (firstOk) return coverage === 1 ? 0.7 : 0.4 * coverage;
+  if (lastOk) return 0.3 + 0.4 * coverage;
   return 0.4 * coverage;
+}
+
+function middleConflict(q: string[], c: string[]): boolean {
+  const qMid = q.slice(1, -1);
+  const cMid = c.slice(1, -1);
+  const qExtra = qMid.filter((t) => !cMid.some((u) => tokenMatches(t, u)));
+  const cExtra = cMid.filter((t) => !qMid.some((u) => tokenMatches(u, t)));
+  return qExtra.length > 0 && cExtra.length > 0;
 }
 
 export function teamMatches(expected: string | undefined, actual: string | undefined): boolean {

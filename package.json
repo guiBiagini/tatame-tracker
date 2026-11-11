@@ -1,6 +1,6 @@
 {
   "name": "tatame-tracker",
-  "description": "Extensão de navegador que centraliza categoria, horário e tatame dos atletas da academia em campeonatos de Jiu-Jitsu.",
+  "description": "ExtensÃ£o de navegador que centraliza categoria, horÃ¡rio e tatame dos atletas da academia em campeonatos de Jiu-Jitsu.",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,6 +12,7 @@
     "zip": "wxt zip",
     "compile": "tsc --noEmit",
     "test": "vitest run",
+    "demo": "vite --config demo/vite.config.ts",
     "test:watch": "vitest",
     "postinstall": "wxt prepare"
   },
