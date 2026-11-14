@@ -23,6 +23,8 @@ export function resolveUrl(input: string): EventRef | null {
   } catch {
     return null;
   }
+  // A URL vira link no painel: só http(s), nunca javascript:, data: etc.
+  if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
   for (const adapter of ADAPTERS) {
     const parsed = adapter.parseUrl(url);
     if (parsed) return { provider: adapter.id, externalId: parsed.externalId, url: url.href };

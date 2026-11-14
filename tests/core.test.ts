@@ -18,6 +18,12 @@ describe('resolveUrl', () => {
     expect(resolveUrl('https://smoothcomp.com/en/event/1')).toBeNull();
     expect(resolveUrl('não é url')).toBeNull();
   });
+
+  it('aceita só http(s): a URL vira link no painel', () => {
+    expect(resolveUrl('javascript:/x/evento/1;alert(1)')).toBeNull();
+    expect(resolveUrl('data:/x/evento/1')).toBeNull();
+    expect(resolveUrl('http://eventocbjje.com.br/cbjje/evento/95/')?.provider).toBe('meucombate');
+  });
 });
 
 describe('datas', () => {

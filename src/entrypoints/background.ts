@@ -27,8 +27,10 @@ export default defineBackground(() => {
     await notify(await runSync());
   });
 
-  browser.runtime.onMessage.addListener((message: Message, _sender, sendResponse) => {
-    if (message?.type !== 'sync') return;
+  browser.runtime.onMessage.addListener((message: Message, sender, sendResponse) => {
+    // Só o painel da própria extensão; nunca scripts rodando em abas de sites.
+    if (sender.id !== browser.runtime.id || sender.tab) return;
+    if (!isSyncMessage(message)) return;
     runSync({ eventIds: message.eventIds, force: message.force })
       .then(async (changes) => {
         await notify(changes);
@@ -40,6 +42,16 @@ export default defineBackground(() => {
     return true; // resposta assíncrona
   });
 });
+
+function isSyncMessage(m: unknown): m is Message {
+  if (typeof m !== 'object' || m === null) return false;
+  const { type, eventIds, force } = m as Record<string, unknown>;
+  return (
+    type === 'sync' &&
+    (eventIds === undefined || (Array.isArray(eventIds) && eventIds.every((id) => typeof id === 'string'))) &&
+    (force === undefined || typeof force === 'boolean')
+  );
+}
 
 async function notify(changes: Change[]) {
   if (!changes.length || !(await settingsItem.getValue()).notifications) return;

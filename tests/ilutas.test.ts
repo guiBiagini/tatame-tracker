@@ -12,6 +12,20 @@ describe('ilutas.parseUrl', () => {
   ])('%s', (url, id) => {
     expect(iLutasAdapter.parseUrl(new URL(url))).toEqual({ externalId: id });
   });
+
+  it('rejeita identificadores que injetariam parâmetros na URL', () => {
+    expect(iLutasAdapter.parseUrl(new URL(`${BASE}/Evento/?event=abc123%26admin%3D1`))).toBeNull();
+    expect(iLutasAdapter.parseUrl(new URL(`${BASE}/Evento/?event=xyz`))).toBeNull();
+    expect(iLutasAdapter.parseUrl(new URL(`${BASE}/evento/%3Fevent%3Dx`))).toBeNull();
+  });
+
+  it('revalida o identificador vindo do storage', async () => {
+    const http = fakeHttp({});
+    await expect(
+      iLutasAdapter.fetchEvent({ provider: 'ilutas', externalId: 'abc&x=1', url: BASE }, http),
+    ).rejects.toThrow('inválido');
+    expect(http.calls).toHaveLength(0);
+  });
 });
 
 describe('ilutas.parseChecagem', () => {

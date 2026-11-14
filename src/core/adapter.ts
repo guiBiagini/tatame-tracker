@@ -35,6 +35,10 @@ export interface ProviderAdapter {
 
 const RETRY_STATUS = new Set([429, 502, 503, 504]);
 const MAX_RETRIES = 5;
+/** Sem limite, um site que segura a conexão travaria a fila de sincronização. */
+const REQUEST_TIMEOUT_MS = 20_000;
+/** As maiores páginas reais (checagem do iLutas) ficam bem abaixo disso. */
+const MAX_RESPONSE_BYTES = 10_000_000;
 
 export const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
@@ -44,8 +48,13 @@ export const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(r
  */
 async function politeFetch(url: string): Promise<Response> {
   for (let attempt = 0; ; attempt++) {
-    const res = await fetch(url, { credentials: 'omit' });
-    if (res.ok) return res;
+    const res = await fetch(url, { credentials: 'omit', signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+    if (res.ok) {
+      if (Number(res.headers.get('content-length')) > MAX_RESPONSE_BYTES) {
+        throw new Error(`Resposta grande demais em ${url}`);
+      }
+      return res;
+    }
     if (!RETRY_STATUS.has(res.status) || attempt >= MAX_RETRIES) {
       throw new Error(`HTTP ${res.status} em ${url}`);
     }

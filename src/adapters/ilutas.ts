@@ -14,6 +14,9 @@ import type { Competitor } from '../core/model';
  */
 
 const BASE = 'https://www.ilutas.com.br';
+/** Validados antes de entrar na URL: impedem injeção de parâmetros (&, #, ?). */
+const HASH_RE = /^[a-f0-9]{6,64}$/i;
+const SLUG_RE = /^[a-z0-9][a-z0-9._-]*$/i;
 
 export const iLutasAdapter: ProviderAdapter = {
   id: 'ilutas',
@@ -22,12 +25,17 @@ export const iLutasAdapter: ProviderAdapter = {
   parseUrl(url) {
     if (!/(^|\.)ilutas\.com\.br$/.test(url.hostname)) return null;
     const hash = url.searchParams.get('event');
-    if (hash) return { externalId: hash };
+    if (hash) return HASH_RE.test(hash) ? { externalId: hash } : null;
     const slug = url.pathname.match(/^\/evento\/([^/?#]+)/i)?.[1];
-    return slug ? { externalId: `slug:${slug}` } : null;
+    return slug && SLUG_RE.test(slug) ? { externalId: `slug:${slug}` } : null;
   },
 
   async fetchEvent(ref, http) {
+    // Revalida o que veio do storage antes de montar URLs.
+    const valid = ref.externalId.startsWith('slug:')
+      ? SLUG_RE.test(ref.externalId.slice(5))
+      : HASH_RE.test(ref.externalId);
+    if (!valid) throw new Error('Identificador de evento iLutas inválido');
     let hash = ref.externalId;
     let eventHtml: string;
     if (hash.startsWith('slug:')) {
