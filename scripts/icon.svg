@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Kimono branco com faixa preta (ponteira vermelha) sobre fundo azul tatame -->
+  <defs>
+    <clipPath id="gi"><path id="jaqueta" d="M50 16 H78 L98 23 L121 55 L106 67 L93 53 V111 H35 V53 L22 67 L7 55 L30 23 Z"/></clipPath>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#1d4ed8"/>
+  <use href="#jaqueta" fill="#ffffff"/>
+  <g clip-path="url(#gi)">
+    <!-- gola de baixo e gola de cima (esquerda sobre direita) -->
+    <path d="M80 8 L50 88" stroke="#cbd5e1" stroke-width="11"/>
+    <path d="M48 8 L78 88" stroke="#e8edf3" stroke-width="11"/>
+    <path d="M42.9 10 L72.9 90 M53.1 6 L83.1 86" stroke="#94a3b8" stroke-width="1.5"/>
+  </g>
+  <!-- abertura do pescoço -->
+  <path d="M55.5 15 L64 36 L72.5 15 Z" fill="#1d4ed8"/>
+  <use href="#jaqueta" fill="none" stroke="#0f172a" stroke-width="3" stroke-linejoin="round"/>
+  <!-- faixa -->
+  <rect x="35" y="76" width="58" height="13" fill="#111111"/>
+  <!-- pontas penduradas, com a ponteira vermelha da faixa preta -->
+  <path d="M60 86 L47 116 L56 120 L67 90 Z" fill="#111111" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M68 86 L81 116 L72 120 L61 90 Z" fill="#111111" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M50.4 108 L58.8 111.6 L56 120 L47 116 Z" fill="#dc2626"/>
+  <path d="M77.6 108 L69.2 111.6 L72 120 L81 116 Z" fill="#dc2626"/>
+  <!-- nó -->
+  <rect x="56" y="73" width="16" height="19" rx="3" fill="#111111" stroke="#ffffff" stroke-width="1.5"/>
+</svg>
