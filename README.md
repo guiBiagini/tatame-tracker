@@ -87,7 +87,7 @@ A **demonstração** (`demo/`) usa a mesma interface e a mesma sincronização d
 ## Princípios
 
 - **Respeito aos sites:** só lê páginas públicas, consulta pouco quando o evento está longe, espaça as requisições e guarda cache local. Não contorna proteções anti-bot (Cloudflare, captcha) nem faz login no lugar do usuário.
-- **Privacidade:** tudo fica no navegador do usuário (`chrome.storage.local`), sem servidor. As fixtures de teste usam **nomes fictícios**: nenhum dado real de atleta vai para o repositório.
+- **Privacidade:** tudo fica no navegador do usuário (`chrome.storage.local`), sem servidor. Veja a [Política de Privacidade](PRIVACY.md). As fixtures de teste usam **nomes fictícios**: nenhum dado real de atleta vai para o repositório.
 - **Falha visível:** se um site mudar de estrutura, o evento mostra o erro e mantém os últimos dados conhecidos, em vez de exibir informação errada.
 
 ## Contribua
