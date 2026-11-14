@@ -98,6 +98,12 @@ O Tatame Tracker é **open-source e colaborativo**: qualquer pessoa da comunidad
 - **Quer suportar uma nova federação ou plataforma?** Siga o passo a passo em [Arquitetura](#arquitetura) e envie um pull request.
 - Antes de enviar, rode `npm test` e `npm run compile`. Nas fixtures de teste, use sempre **nomes fictícios**.
 
+## Licença
+
+Distribuído sob a **[GNU GPL v3.0 ou posterior](LICENSE)**. Você pode usar, estudar, modificar e redistribuir a extensão livremente, inclusive publicar a sua versão. A condição é que **versões modificadas que forem distribuídas também sejam GPL**, com o código aberto. Assim, as melhorias voltam para a comunidade e o projeto não pode ser fechado e revendido.
+
+Ao enviar uma contribuição, você concorda que ela seja distribuída sob a mesma licença.
+
 ## ☕ Apoie o projeto (Buy Me a Coffee)
 
 Se a extensão ajuda você ou a sua academia, considere pagar um café para apoiar o desenvolvimento:
