@@ -89,3 +89,23 @@ A **demonstração** (`demo/`) usa a mesma interface e a mesma sincronização d
 - **Respeito aos sites:** só lê páginas públicas, consulta pouco quando o evento está longe, espaça as requisições e guarda cache local. Não contorna proteções anti-bot (Cloudflare, captcha) nem faz login no lugar do usuário.
 - **Privacidade:** tudo fica no navegador do usuário (`chrome.storage.local`), sem servidor. As fixtures de teste usam **nomes fictícios**: nenhum dado real de atleta vai para o repositório.
 - **Falha visível:** se um site mudar de estrutura, o evento mostra o erro e mantém os últimos dados conhecidos, em vez de exibir informação errada.
+
+## Contribua
+
+O Tatame Tracker é **open-source e colaborativo**: qualquer pessoa da comunidade do Jiu-Jitsu pode ajudar a melhorar o código atual.
+
+- **Encontrou um erro** ou um site que mudou de estrutura? Abra uma [issue](https://github.com/guiBiagini/tatame-tracker/issues) com o link do evento.
+- **Quer suportar uma nova federação ou plataforma?** Siga o passo a passo em [Arquitetura](#arquitetura) e envie um pull request.
+- Antes de enviar, rode `npm test` e `npm run compile`. Nas fixtures de teste, use sempre **nomes fictícios**.
+
+## ☕ Apoie o projeto (Buy Me a Coffee)
+
+Se a extensão ajuda você ou a sua academia, considere pagar um café para apoiar o desenvolvimento:
+
+**Pix (chave aleatória):**
+
+```
+7c71d3fc-606c-43d4-a704-63720335cb17
+```
+
+Toda contribuição, seja em código ou em café, é muito bem-vinda. Oss! 🥋
