@@ -73,6 +73,7 @@ npm run compile   # checagem de tipos
 npm run dev       # abre o Chrome com a extensão carregada e hot reload
 npm run build     # gera .output/chrome-mv3
 npm run demo      # abre a interface do painel em http://localhost:5199, sem instalar a extensão
+bash scripts/store-shots.sh   # com a demo rodando: regera as imagens da Chrome Web Store em docs/store/
 ```
 
 A **demonstração** (`demo/`) usa a mesma interface e a mesma sincronização da extensão. Só o armazenamento do Chrome é trocado pelo `localStorage` da página. O evento da CBJJE é consultado de verdade; o evento IBJJF da demo é fictício e serve para mostrar tatame e horário.

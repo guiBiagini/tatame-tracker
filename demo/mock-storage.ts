@@ -1,7 +1,8 @@
 /** Substitui `wxt/utils/storage` na demonstração: guarda no localStorage da página. */
 type Listener<T> = (value: T | null, old: T | null) => void;
 
-const PREFIX = 'tatame-demo:';
+// A vitrine da loja (store.html) tem dados próprios, sem apagar os da demo.
+const PREFIX = location.pathname.includes('store') ? 'tatame-store:' : 'tatame-demo:';
 
 function defineItem<T>(key: string, opts: { fallback: T }) {
   const listeners = new Set<Listener<T>>();

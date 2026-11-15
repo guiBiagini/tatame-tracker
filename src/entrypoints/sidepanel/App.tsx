@@ -210,7 +210,7 @@ function AthletesTab({ athletes }: { athletes: Athlete[] }) {
         rows={4}
         value={bulk}
         onChange={(e) => setBulk(e.target.value)}
-        placeholder={'João Pedro da Silva; Gracie Barra\nMaria Souza'}
+        placeholder={'João Pedro da Silva; Equipe Exemplo\nMaria Souza'}
       />
       <button onClick={add}>Adicionar</button>
       <ul className="list">
