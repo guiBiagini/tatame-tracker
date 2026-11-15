@@ -379,14 +379,17 @@ async function scanAllBrackets(ctx: IlutasContext, http: Http): Promise<Competit
   }
 
   let next = 0;
+  let failures = 0;
   const worker = async () => {
     while (next < jobs.length) {
       const { type, option } = jobs[next++]!;
-      await getBracket(ctx, http, type.id, option.id);
+      // Uma chave que não abre não derruba a varredura inteira.
+      await getBracket(ctx, http, type.id, option.id).catch(() => failures++);
       await sleep(SCAN_DELAY_MS);
     }
   };
   await Promise.all(Array.from({ length: SCAN_CONCURRENCY }, worker));
+  if (failures > jobs.length / 2) throw new Error(`Não foi possível abrir ${failures} de ${jobs.length} chaves do iLutas`);
 
   // Montado na ordem das listas (não na ordem em que as respostas chegaram).
   return jobs.flatMap(({ type, option, prefix }) =>

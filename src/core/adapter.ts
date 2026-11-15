@@ -56,13 +56,27 @@ const MAX_RESPONSE_BYTES = 10_000_000;
 
 export const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
+/** Timeout e queda de conexão: poucas tentativas extras (cada uma pode levar 20 s). */
+const MAX_NETWORK_RETRIES = 2;
+
 /**
- * `fetch` com nova tentativa quando o site limita requisições (429) ou está
- * instável (5xx): respeita `Retry-After` e, sem ele, espera 2s, 4s, 8s...
+ * `fetch` com nova tentativa quando o site limita requisições (429), está
+ * instável (5xx), demora demais ou a conexão cai: respeita `Retry-After` e,
+ * sem ele, espera 2s, 4s, 8s...
  */
 async function politeFetch(url: string): Promise<Response> {
   for (let attempt = 0; ; attempt++) {
-    const res = await fetch(url, { credentials: 'omit', signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+    let res: Response;
+    try {
+      res = await fetch(url, { credentials: 'omit', signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+    } catch (err) {
+      if (attempt >= MAX_NETWORK_RETRIES) {
+        const reason = err instanceof Error && err.name === 'TimeoutError' ? 'tempo esgotado' : 'falha de conexão';
+        throw new Error(`${reason} em ${url}`);
+      }
+      await sleep(2000 * 2 ** attempt);
+      continue;
+    }
     if (res.ok) {
       if (Number(res.headers.get('content-length')) > MAX_RESPONSE_BYTES) {
         throw new Error(`Resposta grande demais em ${url}`);

@@ -297,8 +297,9 @@ function EventsTab({ events, snapshots }: { events: TrackedEvent[]; snapshots: R
                 {' '}
                 · {ADAPTERS.find((a) => a.id === e.provider)?.label}
                 {e.date && ` · ${e.date.split('-').reverse().join('/')}`}
-                {snapshots[e.id]?.error && ' · ⚠ erro'}
+                {snapshots[e.id]?.error && <span title={snapshots[e.id]!.error}> · ⚠ erro</span>}
               </span>
+              {snapshots[e.id]?.error && <div className="error small">{snapshots[e.id]!.error}</div>}
             </span>
             <button className="link" onClick={() => remove(e.id)}>
               remover
