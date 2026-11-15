@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Política de privacidade
+    url: https://github.com/guiBiagini/tatame-tracker/blob/main/PRIVACY.md
+    about: Como a extensão trata os dados dos atletas.

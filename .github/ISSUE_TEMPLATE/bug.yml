@@ -1,0 +1,34 @@
+name: 🐛 Bug
+description: Algo não funciona como deveria.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por reportar! **Não cole nomes completos de atletas reais**, principalmente de menores. Se precisar, use iniciais ou um nome fictício.
+  - type: input
+    id: evento
+    attributes:
+      label: Link do evento
+      description: URL do campeonato em que o problema acontece.
+      placeholder: https://…
+    validations:
+      required: true
+  - type: textarea
+    id: oque
+    attributes:
+      label: O que aconteceu?
+      description: O que você esperava ver e o que apareceu. A mensagem de erro do painel ajuda muito.
+    validations:
+      required: true
+  - type: input
+    id: versao
+    attributes:
+      label: Versão da extensão
+      description: Em chrome://extensions, no cartão do Tatame Tracker.
+      placeholder: 0.1.0
+  - type: dropdown
+    id: navegador
+    attributes:
+      label: Navegador
+      options: [Chrome, Edge, Brave, Outro]

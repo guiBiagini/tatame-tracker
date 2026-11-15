@@ -1,5 +1,9 @@
 # 🥋 Tatame Tracker
 
+[![CI](https://github.com/guiBiagini/tatame-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/guiBiagini/tatame-tracker/actions/workflows/ci.yml)
+[![Licença: GPL v3+](https://img.shields.io/badge/licen%C3%A7a-GPL--3.0--or--later-blue.svg)](LICENSE)
+<!-- Depois da aprovação, adicionar o selo/link da Chrome Web Store aqui. -->
+
 Extensão de navegador que centraliza **categoria, horário e tatame** dos atletas da sua academia em campeonatos de Jiu-Jitsu. Ela substitui a busca manual, atleta por atleta, nos sites de cada federação.
 
 - Cadastre os atletas uma vez (inclusive em lote).
@@ -7,6 +11,8 @@ Extensão de navegador que centraliza **categoria, horário e tatame** dos atlet
 - Veja num painel lateral quem está inscrito, em qual categoria e, quando a organização publicar, **tatame, horário, número da luta e adversário**.
 - Receba **notificações** quando a chave sair ou quando o tatame ou horário mudar.
 - **Copie um resumo** pronto para o grupo da academia no WhatsApp.
+
+![Painel do Tatame Tracker com tatame e horário dos atletas (dados fictícios)](docs/store/captura-1.png)
 
 ## Plataformas suportadas
 
@@ -74,9 +80,10 @@ npm run dev       # abre o Chrome com a extensão carregada e hot reload
 npm run build     # gera .output/chrome-mv3
 npm run demo      # abre a interface do painel em http://localhost:5199, sem instalar a extensão
 bash scripts/store-shots.sh   # com a demo rodando: regera as imagens da Chrome Web Store em docs/store/
+node scripts/build-icons.mjs  # regera public/icon/*.png a partir de assets/brand/*.svg (requer @resvg/resvg-js)
 ```
 
-A **demonstração** (`demo/`) usa a mesma interface e a mesma sincronização da extensão. Só o armazenamento do Chrome é trocado pelo `localStorage` da página. O evento da CBJJE é consultado de verdade; o evento IBJJF da demo é fictício e serve para mostrar tatame e horário.
+A **demonstração** (`demo/`) usa a mesma interface e a mesma sincronização da extensão. Só o armazenamento do Chrome é trocado pelo `localStorage` da página. O evento da CBJJE é consultado de verdade; o evento IBJJF da demo é fictício e serve para mostrar tatame e horário. Em `demo/store/` fica a vitrine (100% fictícia) usada para gerar as capturas da loja.
 
 ### Instalar no Chrome sem a loja
 
@@ -98,6 +105,8 @@ O Tatame Tracker é **open-source e colaborativo**: qualquer pessoa da comunidad
 - **Encontrou um erro** ou um site que mudou de estrutura? Abra uma [issue](https://github.com/guiBiagini/tatame-tracker/issues) com o link do evento.
 - **Quer suportar uma nova federação ou plataforma?** Siga o passo a passo em [Arquitetura](#arquitetura) e envie um pull request.
 - Antes de enviar, rode `npm test` e `npm run compile`. Nas fixtures de teste, use sempre **nomes fictícios**.
+
+O passo a passo completo, a estrutura de pastas e as regras de privacidade estão no **[guia de contribuição](CONTRIBUTING.md)**. As mudanças de cada versão ficam no [CHANGELOG](CHANGELOG.md).
 
 ## Licença
 

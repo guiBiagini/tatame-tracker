@@ -1,16 +1,16 @@
 /**
  * Vitrine para a Chrome Web Store: monta cada captura em 1280×800 (ou o
  * bloco promocional 440×280) com o painel real e dados fictícios.
- * Uso: /store.html?shot=1..5 | ?shot=promo  (ver scripts/store-shots.sh)
+ * Uso: /store/?shot=1..5 | /store/?shot=promo  (ver scripts/store-shots.sh)
  */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from '../src/entrypoints/sidepanel/App';
-import { buildSummary } from '../src/core/summary';
-import '../src/entrypoints/sidepanel/style.css';
+import App from '../../src/entrypoints/sidepanel/App';
+import { buildSummary } from '../../src/core/summary';
+import '../../src/entrypoints/sidepanel/style.css';
 import './store.css';
-import icon from '../public/icon/128.png';
-import { seedStore, storeAthletes, storeEvents, storeSnapshots } from './store-seed';
+import icon from '../../public/icon/128.png';
+import { seedStore, storeAthletes, storeEvents, storeSnapshots } from './seed';
 
 type Shot = { title: string; text: string; bullets?: string[]; tab: number; extra?: 'notification' | 'whatsapp' };
 

@@ -1,0 +1,33 @@
+name: 🥋 Pedir nova plataforma
+description: Sugira um site de inscrições/chaves que a extensão ainda não suporta.
+labels: [nova-plataforma]
+body:
+  - type: input
+    id: plataforma
+    attributes:
+      label: Nome da plataforma
+      placeholder: Smoothcomp, FJJEMG, Soul Sports…
+    validations:
+      required: true
+  - type: input
+    id: evento
+    attributes:
+      label: Link de um evento com inscritos publicados
+      description: De preferência um evento futuro, para testar a lista de inscritos e, depois, as chaves.
+    validations:
+      required: true
+  - type: checkboxes
+    id: dados
+    attributes:
+      label: O que a plataforma publica?
+      options:
+        - label: Lista de inscritos
+        - label: Chaves
+        - label: Tatame e horário por luta
+        - label: Cronograma geral (horário por faixa/idade)
+        - label: Exige login para ver os dados
+  - type: textarea
+    id: formato
+    attributes:
+      label: Formato dos dados
+      description: Página HTML, PDF, planilha, aplicativo… Prints ajudam (sem expor nomes de atletas).

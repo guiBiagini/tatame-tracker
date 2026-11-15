@@ -2,8 +2,8 @@
  * Dados da vitrine da Chrome Web Store. Tudo fictício: nomes, equipes e
  * eventos inventados (nenhuma consulta real é feita nesta página).
  */
-import type { Athlete, EventSnapshot, TrackedEvent } from '../src/core/model';
-import { athletesItem, eventsItem, snapshotsItem } from '../src/lib/storage';
+import type { Athlete, EventSnapshot, TrackedEvent } from '../../src/core/model';
+import { athletesItem, eventsItem, snapshotsItem } from '../../src/lib/storage';
 
 const TEAM = 'Equipe Exemplo';
 export const storeAthletes: Athlete[] = [

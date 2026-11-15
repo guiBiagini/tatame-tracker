@@ -1,10 +1,21 @@
 {
   "name": "tatame-tracker",
-  "description": "ExtensÃ£o de navegador que centraliza categoria, horÃ¡rio e tatame dos atletas da academia em campeonatos de Jiu-Jitsu.",
+  "description": "Extensão de navegador que centraliza categoria, horário e tatame dos atletas da academia em campeonatos de Jiu-Jitsu.",
   "version": "0.1.0",
   "license": "GPL-3.0-or-later",
   "private": true,
   "type": "module",
+  "homepage": "https://github.com/guiBiagini/tatame-tracker#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guiBiagini/tatame-tracker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/guiBiagini/tatame-tracker/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "wxt",
     "dev:firefox": "wxt -b firefox",
