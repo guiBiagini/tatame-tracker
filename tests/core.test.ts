@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { resolveUrl } from '../src/adapters';
+import { decodeBody } from '../src/core/adapter';
 import { parseIbjjfWhen, parsePtDate } from '../src/core/dates';
 import { diffSnapshots } from '../src/core/diff';
 import type { Athlete, EventSnapshot, TrackedEvent } from '../src/core/model';
@@ -91,14 +92,14 @@ describe('syncEvent + diff + resumo (IBJJF de ponta a ponta)', () => {
   const noSleep = async () => {};
 
   it('encontra o atleta e busca só as lutas dele', async () => {
-    const snap = await syncEvent(event, athletes, http, noSleep);
+    const snap = await syncEvent(event, athletes, http, { sleep: noSleep });
     expect(snap.entries).toHaveLength(1);
     expect(snap.entries[0]).toMatchObject({ athleteId: 'a1', status: 'scheduled', category: 'Adult / Male / BLUE / Light' });
     expect(http.calls.filter((u) => u.includes('by_competitor'))).toHaveLength(1);
   });
 
   it('notifica quando a chave sai e quando tatame/horário mudam', async () => {
-    const next = await syncEvent(event, athletes, http, noSleep);
+    const next = await syncEvent(event, athletes, http, { sleep: noSleep });
     const before: EventSnapshot = { ...next, bracketsPublished: false, entries: [] };
     const first = diffSnapshots(before, next, athletes);
     expect(first.map((c) => c.title)).toEqual(['Chave publicada', 'João P. Silva encontrado', 'João P. Silva: luta agendada']);
@@ -113,10 +114,62 @@ describe('syncEvent + diff + resumo (IBJJF de ponta a ponta)', () => {
   });
 
   it('gera resumo para WhatsApp', async () => {
-    const snap = await syncEvent(event, athletes, http, noSleep);
+    const snap = await syncEvent(event, athletes, http, { sleep: noSleep });
     const text = buildSummary([snap], athletes);
     expect(text).toContain('*Exemplo International Open IBJJF Jiu-Jitsu Championship 2026*');
     expect(text).toContain('*João P. Silva*');
     expect(text).toContain('Tatame 3 · 11:05 · Luta 31 (Semi-Final) · vs Rival Dois');
+  });
+});
+
+describe('decodeBody', () => {
+  it('respeita o charset do cabeçalho (checagem do iLutas vem em ISO-8859-1)', () => {
+    const latin1 = new Uint8Array([0x4a, 0x4f, 0xc3, 0x4f]).buffer; // "JOÃO"
+    expect(decodeBody(latin1, 'text/html; charset=iso-8859-1')).toBe('JOÃO');
+    const utf8 = new TextEncoder().encode('JOÃO').buffer;
+    expect(decodeBody(utf8, 'text/html; charset=UTF-8')).toBe('JOÃO');
+    expect(decodeBody(utf8, null)).toBe('JOÃO');
+    expect(decodeBody(utf8, 'text/html; charset=inexistente')).toBe('JOÃO');
+  });
+});
+
+describe('chave e previsão (sem tatame)', () => {
+  const bracketFight = {
+    category: 'Peso GI - Adulto - Azul - Leve',
+    finished: false,
+    estimated: true,
+    startsAt: '2026-11-22T15:00',
+    note: 'Cronograma: 15:00 FAIXA AZUL – ADULTO E MASTER',
+    bracketSize: 4,
+    round: 'Semifinal',
+    opponent: 'Rival Um',
+  };
+  const snap = (fights: EventSnapshot['entries'][number]['fights']): EventSnapshot => ({
+    eventId: 'ilutas:x',
+    fetchedAt: '',
+    name: 'Copa Exemplo',
+    date: '2026-11-22',
+    bracketsPublished: true,
+    entries: [
+      { athleteId: 'a1', eventId: 'ilutas:x', category: 'Peso GI - Adulto - Azul - Leve', competitorName: 'João', matchScore: 1, status: deriveStatus(fights, true), fights },
+    ],
+  });
+
+  it('previsão não conta como luta agendada', () => {
+    expect(deriveStatus([bracketFight], true)).toBe('bracket_published');
+    expect(deriveStatus([{ finished: false, estimated: true, startsAt: '2026-11-22T15:00' }], false)).toBe('registered');
+  });
+
+  it('notifica adversário e previsão, não "luta agendada"', () => {
+    const changes = diffSnapshots(snap([]), snap([bracketFight]), athletes);
+    expect(changes).toEqual([
+      expect.objectContaining({ title: 'João P. Silva: adversário na chave', message: 'Semifinal vs Rival Um' }),
+      expect.objectContaining({ title: 'João P. Silva: previsão de horário', message: 'Por volta de 15:00 (FAIXA AZUL – ADULTO E MASTER)' }),
+    ]);
+    expect(diffSnapshots(snap([bracketFight]), snap([bracketFight]), athletes)).toEqual([]);
+  });
+
+  it('resumo marca a previsão', () => {
+    expect(buildSummary([snap([bracketFight])], athletes)).toContain('previsão ~15:00 · Semifinal · vs Rival Um · chave de 4');
   });
 });

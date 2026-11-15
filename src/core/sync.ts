@@ -41,27 +41,34 @@ export function matchAthletes(athletes: Athlete[], competitors: Competitor[]): M
 
 export function deriveStatus(fights: Fight[], bracketsPublished: boolean): EntryStatus {
   if (fights.length && fights.every((f) => f.finished)) return 'finished';
-  if (fights.some((f) => !f.finished && (f.mat || f.startsAt))) return 'scheduled';
-  if (bracketsPublished || fights.length) return 'bracket_published';
+  // Previsão (cronograma por grupo) não é horário marcado da luta.
+  if (fights.some((f) => !f.finished && (f.mat || (f.startsAt && !f.estimated)))) return 'scheduled';
+  if (bracketsPublished || fights.some((f) => !f.estimated)) return 'bracket_published';
   return 'registered';
 }
 
 /** Busca o evento, encontra os atletas da academia e monta o snapshot normalizado. */
+export interface SyncOptions {
+  /** Snapshot anterior do evento (o adaptador pode reaproveitar dados dele). */
+  previous?: EventSnapshot;
+  sleep?: (ms: number) => Promise<void>;
+}
+
 export async function syncEvent(
   event: TrackedEvent,
   athletes: Athlete[],
   http: Http,
-  sleep: (ms: number) => Promise<void> = (ms) => new Promise((r) => setTimeout(r, ms)),
+  { previous, sleep = (ms) => new Promise((r) => setTimeout(r, ms)) }: SyncOptions = {},
 ): Promise<EventSnapshot> {
   const adapter = getAdapter(event.provider);
   const ref = { provider: event.provider, externalId: event.externalId, url: event.url };
-  const data = await adapter.fetchEvent(ref, http);
+  const data = await adapter.fetchEvent(ref, http, { previous });
   const entries: Entry[] = [];
 
   for (const { athlete, competitor, score } of matchAthletes(athletes, data.competitors)) {
     let fights: Fight[] = [];
     if (adapter.fetchFights) {
-      fights = await adapter.fetchFights(ref, competitor, http);
+      fights = await adapter.fetchFights(ref, competitor, http, data.context);
       await sleep(FIGHT_REQUEST_DELAY_MS); // gentileza com o servidor
     }
 
@@ -80,6 +87,7 @@ export async function syncEvent(
         category,
         competitorName: competitor.name,
         competitorTeam: competitor.team,
+        competitorId: competitor.externalId,
         matchScore: score,
         status: deriveStatus(categoryFights, data.bracketsPublished),
         fights: categoryFights,
@@ -94,5 +102,6 @@ export async function syncEvent(
     date: data.date,
     bracketsPublished: data.bracketsPublished,
     entries,
+    ...(data.state && { state: data.state }),
   };
 }

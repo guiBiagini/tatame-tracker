@@ -1,4 +1,4 @@
-import type { Competitor, Fight, ProviderId } from './model';
+import type { Competitor, EventSnapshot, Fight, ProviderId } from './model';
 
 /** Acesso HTTP injetado: `fetch` na extensão, fixtures nos testes. */
 export interface Http {
@@ -17,6 +17,15 @@ export interface EventData {
   date?: string;
   bracketsPublished: boolean;
   competitors: Competitor[];
+  /** Dados já carregados que o adaptador reaproveita em `fetchFights` (evita baixar de novo). */
+  context?: unknown;
+  /** Gravado no snapshot e devolvido na próxima consulta em `FetchOptions.previous.state`. */
+  state?: Record<string, string>;
+}
+
+export interface FetchOptions {
+  /** Resultado da consulta anterior do mesmo evento, se houver. */
+  previous?: EventSnapshot;
 }
 
 /**
@@ -28,9 +37,14 @@ export interface ProviderAdapter {
   label: string;
   /** Reconhece a URL colada pelo usuário. Retorna null se não for desta plataforma. */
   parseUrl(url: URL): { externalId: string } | null;
-  fetchEvent(ref: EventRef, http: Http): Promise<EventData>;
-  /** Só para plataformas que publicam tatame/horário por atleta. */
-  fetchFights?(ref: EventRef, competitor: Competitor, http: Http): Promise<Fight[]>;
+  fetchEvent(ref: EventRef, http: Http, options?: FetchOptions): Promise<EventData>;
+  /** Lutas, chave ou previsão de horário de um competidor encontrado. */
+  fetchFights?(ref: EventRef, competitor: Competitor, http: Http, context?: unknown): Promise<Fight[]>;
+  /**
+   * A plataforma publica tatame/horário que mudam durante o evento: no dia,
+   * a extensão consulta a cada 5 min em vez de 1 h.
+   */
+  liveSchedule?: boolean;
 }
 
 const RETRY_STATUS = new Set([429, 502, 503, 504]);
@@ -63,9 +77,23 @@ async function politeFetch(url: string): Promise<Response> {
   }
 }
 
+/**
+ * Decodifica pelo charset do `Content-Type`. `Response.text()` assume UTF-8,
+ * mas há páginas em ISO-8859-1 (ex.: checagem do iLutas): "JOÃO" virava "JO�O".
+ */
+export function decodeBody(body: ArrayBuffer, contentType: string | null): string {
+  const charset = contentType?.match(/charset=["']?([\w-]+)/i)?.[1];
+  try {
+    return new TextDecoder(charset || 'utf-8').decode(body);
+  } catch {
+    return new TextDecoder('utf-8').decode(body); // charset desconhecido
+  }
+}
+
 export const browserHttp: Http = {
   async text(url) {
-    return (await politeFetch(url)).text();
+    const res = await politeFetch(url);
+    return decodeBody(await res.arrayBuffer(), res.headers.get('content-type'));
   },
   async json<T>(url: string) {
     return (await (await politeFetch(url)).json()) as T;

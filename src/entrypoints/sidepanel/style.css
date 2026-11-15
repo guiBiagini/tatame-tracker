@@ -189,6 +189,10 @@ textarea {
   font-weight: 600;
   color: var(--ok);
 }
+/* Previsão pelo cronograma (iLutas): não é horário confirmado. */
+.fight .mat.estimated {
+  color: var(--warn);
+}
 
 .fight .time {
   font-weight: 600;

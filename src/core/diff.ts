@@ -8,7 +8,10 @@ export interface Change {
 }
 
 const entryKey = (e: Entry) => `${e.athleteId}|${e.category}`;
-const fightKey = (f: Fight) => f.fightNumber ?? `${f.round ?? ''}|${f.opponent ?? ''}`;
+/** Chave/previsão (iLutas): uma por categoria, sem número de luta. */
+const isBracketInfo = (f: Fight) => !f.fightNumber && (f.estimated || f.bracketSize !== undefined);
+const fightKey = (f: Fight) =>
+  f.fightNumber ?? (isBracketInfo(f) ? 'chave' : `${f.round ?? ''}|${f.opponent ?? ''}`);
 const time = (f: Fight) => f.startsAt?.slice(11, 16) ?? f.when ?? '?';
 
 /**
@@ -46,6 +49,23 @@ export function diffSnapshots(
     for (const fight of entry.fights) {
       if (fight.finished) continue;
       const prev = oldFights.get(fightKey(fight));
+      if (isBracketInfo(fight)) {
+        if (fight.opponent && fight.opponent !== prev?.opponent) {
+          changes.push({
+            athleteId: entry.athleteId,
+            title: `${name}: adversário na chave`,
+            message: `${fight.round ? `${fight.round} ` : ''}vs ${fight.opponent}`,
+          });
+        }
+        if (fight.estimated && fight.startsAt && fight.startsAt !== prev?.startsAt) {
+          changes.push({
+            athleteId: entry.athleteId,
+            title: `${name}: previsão de horário`,
+            message: `Por volta de ${time(fight)}${fight.note ? ` (${fight.note.replace(/^Cronograma: \S+ /, '')})` : ''}`,
+          });
+        }
+        continue;
+      }
       const where = [fight.mat, time(fight)].filter(Boolean).join(' às ');
       if (!prev || (!prev.mat && !prev.startsAt)) {
         if (fight.mat || fight.startsAt) {

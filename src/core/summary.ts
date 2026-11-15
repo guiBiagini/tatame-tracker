@@ -23,16 +23,15 @@ export function buildSummary(snapshots: EventSnapshot[], athletes: Athlete[]): s
     for (const entry of sorted) {
       lines.push('', `*${nameOf(entry.athleteId)}*`, `  ${entry.category}`);
       const upcoming = entry.fights.filter((f) => !f.finished);
-      if (!upcoming.length) {
-        lines.push(`  ${STATUS_LABEL[entry.status]}`);
-        continue;
-      }
+      if (!upcoming.length || entry.status === 'registered') lines.push(`  ${STATUS_LABEL[entry.status]}`);
       for (const f of upcoming) {
+        const time = f.startsAt ? f.startsAt.slice(11, 16) : f.when;
         const parts = [
           f.mat,
-          f.startsAt ? f.startsAt.slice(11, 16) : f.when,
-          f.fightNumber && `Luta ${f.fightNumber}${f.round ? ` (${f.round})` : ''}`,
+          time && (f.estimated ? `previsão ~${time}` : time),
+          f.fightNumber ? `Luta ${f.fightNumber}${f.round ? ` (${f.round})` : ''}` : f.round,
           f.opponent && `vs ${f.opponent}`,
+          f.bracketSize && `chave de ${f.bracketSize}`,
         ].filter(Boolean);
         lines.push(`  ${parts.join(' · ')}`);
       }

@@ -20,7 +20,7 @@ Extensão de navegador que centraliza **categoria, horário e tatame** dos atlet
 |---|---|---|---|
 | **IBJJF** (bjjcompsystem.com) | IBJJF, CBJJ | Inscritos, chave, **tatame, horário, luta, adversário, resultado** | HTML do servidor |
 | **Meu Combate** | CBJJE (eventocbjje.com.br) e outras do mesmo sistema | Inscritos por categoria e aviso de chave publicada | API JSON pública |
-| **iLutas** | CBJJC, FMAS/PFBJJ, FCJJE, FEJJES, FJJCE… | Inscritos por categoria (a plataforma não publica tatame/horário) | HTML do servidor |
+| **iLutas** | CBJJC, FMAS/PFBJJ, FCJJE, FEJJES, FJJCE… | Inscritos, chave (fase, adversário, tamanho) e **previsão de horário** pelo cronograma. A plataforma não publica tatame | HTML do servidor |
 
 Planejadas: PDFs do Google Drive (BJJ Storm, Genesis Esportes), Smoothcomp (via leitura da página aberta pelo usuário) e FJJEMG/LMJJ.
 
@@ -42,6 +42,11 @@ A frequência de consulta se adapta à data do evento:
 | Dia do evento | a cada 5 min (IBJJF) / 1 h (demais) |
 | Dia seguinte | a cada 6 h (resultados) |
 | Depois disso | para de consultar |
+
+### Particularidades do iLutas
+
+- **Previsão, não horário marcado:** o cronograma do iLutas é uma tabela escrita pelo organizador, com um horário por grupo ("15:00 FAIXA AZUL – ADULTO E MASTER"). A extensão compara a categoria do atleta (kimono ou sem kimono, absoluto, divisão de idade, faixa) com essas linhas e mostra **"Previsão ~15:00"** junto da linha usada. Se nenhuma linha for clara, ou se houver empate, não mostra previsão.
+- **A lista de inscritos sai do ar no dia do evento.** A extensão guarda o que encontrou nas consultas anteriores e continua pelas chaves. Por isso, **adicione o evento antes do dia**. Se ele for adicionado só no dia, a extensão lê todas as chaves (≈250 páginas, cerca de 1,5 min), no máximo a cada 6 h. Os nomes da chave são curtos, então os atletas aparecem como "possíveis correspondências" para confirmar.
 
 ## Arquitetura
 

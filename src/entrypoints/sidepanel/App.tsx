@@ -138,16 +138,27 @@ function EntryRow({ entry, name }: { entry: Entry; name: string }) {
         {entry.competitorTeam && <span className="muted"> · {entry.competitorTeam}</span>}
       </div>
       <div className="muted small">{entry.category}</div>
-      {upcoming.length === 0 && <div className="badge">{STATUS_LABEL[entry.status]}</div>}
-      {upcoming.map((f, i) => (
-        <div key={i} className="fight">
-          <span className="mat">{f.mat ?? 'Tatame ?'}</span>
-          <span className="time">{f.startsAt?.slice(11, 16) ?? f.when ?? '--:--'}</span>
-          <span className="small">
-            {f.fightNumber && `Luta ${f.fightNumber}`} {f.round && `(${f.round})`} {f.opponent && `vs ${f.opponent}`}
-          </span>
-        </div>
-      ))}
+      {(upcoming.length === 0 || entry.status === 'registered') && <div className="badge">{STATUS_LABEL[entry.status]}</div>}
+      {upcoming.map((f, i) => {
+        const time = f.startsAt?.slice(11, 16) ?? f.when;
+        const details = [f.bracketSize && `Chave com ${f.bracketSize} atleta${f.bracketSize > 1 ? 's' : ''}`, f.note];
+        return (
+          <div key={i}>
+            <div className="fight">
+              <span className={`mat${!f.mat && f.estimated ? ' estimated' : ''}`}>
+                {f.mat ?? (f.estimated ? 'Previsão' : f.bracketSize ? 'Chave' : 'Tatame ?')}
+              </span>
+              {(time || !f.bracketSize) && <span className="time">{time ? `${f.estimated ? '~' : ''}${time}` : '--:--'}</span>}
+              <span className="small">
+                {f.fightNumber ? `Luta ${f.fightNumber}${f.round ? ` (${f.round})` : ''}` : f.round}{' '}
+                {f.opponent && `vs ${f.opponent}`}
+                {f.opponentTeam && <span className="muted"> · {f.opponentTeam}</span>}
+              </span>
+            </div>
+            {details.some(Boolean) && <div className="small muted">{details.filter(Boolean).join(' · ')}</div>}
+          </div>
+        );
+      })}
       {done.length > 0 && (
         <div className="small muted">
           Encerradas: {done.map((f) => `${f.round ?? 'luta'} ${f.won === true ? '✔' : f.won === false ? '✖' : ''}`).join(', ')}

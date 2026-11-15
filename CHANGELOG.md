@@ -4,8 +4,17 @@ Todas as mudanças relevantes da extensão. Formato baseado em [Keep a Changelog
 
 ## [Não lançado]
 
+## [0.2.0] - 2026-11-15
+
 ### Adicionado
+- **iLutas: chaves.** Fase, primeiro adversário (com equipe) e tamanho da chave de cada atleta, abrindo só as chaves das categorias dele. Encontra também categorias juntadas pelo organizador.
+- **iLutas: previsão de horário pelo cronograma**, exibida como "Previsão ~HH:MM" com a linha do cronograma usada. Não conta como luta agendada.
+- Notificações "adversário na chave" e "previsão de horário".
+- iLutas no dia do evento (lista de inscritos fora do ar): reaproveita a consulta anterior; sem ela, varre as chaves no máximo a cada 6 h.
 - CI no GitHub Actions (tipos, testes e build), modelos de issue e de pull request, guia de contribuição.
+
+### Corrigido
+- Acentos corrompidos em páginas que não usam UTF-8 (checagem do iLutas, em ISO-8859-1): o texto agora é decodificado pelo charset informado pelo site.
 
 ## [0.1.0] - 2026-11-14
 
@@ -23,5 +32,6 @@ Primeira versão enviada à Chrome Web Store.
 ### Segurança
 - Validação dos identificadores de evento, aceitação de URLs somente http(s), mensagens aceitas só do próprio painel, timeout e limite de tamanho nas requisições.
 
-[Não lançado]: https://github.com/guiBiagini/tatame-tracker/compare/v0.1.0...HEAD
+[Não lançado]: https://github.com/guiBiagini/tatame-tracker/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/guiBiagini/tatame-tracker/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/guiBiagini/tatame-tracker/releases/tag/v0.1.0

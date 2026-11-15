@@ -47,6 +47,15 @@ export interface Fight {
   opponentTeam?: string;
   finished: boolean;
   won?: boolean;
+  /**
+   * `startsAt` é previsão (ex.: horário do grupo no cronograma do iLutas),
+   * não o horário marcado da luta. Não conta como "luta agendada".
+   */
+  estimated?: boolean;
+  /** Texto de apoio vindo da plataforma, ex.: a linha do cronograma usada na previsão. */
+  note?: string;
+  /** Total de atletas na chave da categoria, quando a plataforma informa. */
+  bracketSize?: number;
 }
 
 /** Um competidor como aparece na lista de inscritos da plataforma. */
@@ -54,6 +63,7 @@ export interface Competitor {
   name: string;
   team?: string;
   category?: string;
+  /** Identificador do competidor/categoria na plataforma (formato próprio de cada adaptador). */
   externalId?: string;
 }
 
@@ -64,6 +74,8 @@ export interface Entry {
   category: string;
   competitorName: string;
   competitorTeam?: string;
+  /** `Competitor.externalId`: permite reencontrar o competidor se a lista de inscritos sair do ar. */
+  competitorId?: string;
   /** 0–1. Abaixo de MATCH_THRESHOLD a interface mostra como "possível". */
   matchScore: number;
   status: EntryStatus;
@@ -78,6 +90,8 @@ export interface EventSnapshot {
   bracketsPublished: boolean;
   entries: Entry[];
   error?: string;
+  /** Estado que o adaptador guarda entre consultas (ex.: quando fez a última varredura completa). */
+  state?: Record<string, string>;
 }
 
 export const STATUS_LABEL: Record<EntryStatus, string> = {

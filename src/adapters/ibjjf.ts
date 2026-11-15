@@ -22,6 +22,7 @@ const BASE = 'https://www.bjjcompsystem.com';
 export const ibjjfAdapter: ProviderAdapter = {
   id: 'ibjjf',
   label: 'IBJJF (bjjcompsystem)',
+  liveSchedule: true,
 
   parseUrl(url) {
     if (!/(^|\.)bjjcompsystem\.com$/.test(url.hostname)) return null;

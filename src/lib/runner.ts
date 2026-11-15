@@ -35,12 +35,12 @@ async function doRunSync({ eventIds, force = false }: RunOptions): Promise<Chang
   for (const event of events) {
     if (eventIds && !eventIds.includes(event.id)) continue;
     const previous = snapshots[event.id];
-    const live = !!getAdapter(event.provider).fetchFights;
+    const live = !!getAdapter(event.provider).liveSchedule;
     if (!force && !isDue(event, previous, live)) continue;
 
     let next: EventSnapshot;
     try {
-      next = await syncEvent(event, athletes, browserHttp);
+      next = await syncEvent(event, athletes, browserHttp, { previous });
     } catch (err) {
       // Mantém os dados anteriores visíveis e registra o erro.
       next = {

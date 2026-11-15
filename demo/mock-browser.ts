@@ -5,13 +5,13 @@
 import type { Message, SyncResponse } from '../src/lib/messages';
 import { runSync } from '../src/lib/runner';
 import { eventsItem } from '../src/lib/storage';
-import { DEMO_EVENT_ID } from './seed';
+import { isDemoEvent } from './seed';
 
 export const browser = {
   runtime: {
     async sendMessage(msg: Message): Promise<SyncResponse> {
       const ids = (msg.eventIds ?? (await eventsItem.getValue()).map((e) => e.id)).filter(
-        (id) => id !== DEMO_EVENT_ID,
+        (id) => !isDemoEvent(id),
       );
       try {
         const changes = ids.length ? await runSync({ eventIds: ids, force: msg.force }) : [];
