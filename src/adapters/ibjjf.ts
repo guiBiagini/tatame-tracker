@@ -1,5 +1,5 @@
 import type { EventRef, Http, ProviderAdapter } from '../core/adapter';
-import { parseIbjjfWhen } from '../core/dates';
+import { parseEnDate, parseIbjjfWhen } from '../core/dates';
 import { clean, parseDocument } from '../core/html';
 import type { Competitor, Fight } from '../core/model';
 
@@ -15,9 +15,29 @@ import type { Competitor, Fight } from '../core/model';
  *
  * Antes de a chave sair, a página do dia não existe: o evento fica
  * "inscrito – chave ainda não publicada".
+ *
+ * Também aceita o link de divulgação (ibjjf.com/events/<slug> ou
+ * /events/<id>/...): a página do evento aponta para o torneio no bjjcompsystem.
  */
 
 const BASE = 'https://www.bjjcompsystem.com';
+const SITE = 'https://ibjjf.com';
+const ID_RE = /^\d{1,9}$/;
+const SLUG_RE = /^[a-z0-9][a-z0-9-]*$/i;
+
+/**
+ * Código do torneio no bjjcompsystem. Com link do ibjjf.com, lê a página do
+ * evento, que também traz a data (o bjjcompsystem não publica a data).
+ */
+async function resolveTournament(ref: EventRef, http: Http): Promise<{ id: string; date?: string }> {
+  if (ID_RE.test(ref.externalId)) return { id: ref.externalId };
+  const slug = ref.externalId.startsWith('slug:') ? ref.externalId.slice(5) : '';
+  if (!SLUG_RE.test(slug)) throw new Error('Identificador de evento IBJJF inválido');
+  const html = await http.text(`${SITE}/events/${slug}`);
+  const id = html.match(/bjjcompsystem\.com\/tournaments\/(\d{1,9})/)?.[1] ?? html.match(/\/events\/(\d{1,9})\//)?.[1];
+  if (!id) throw new Error('Torneio não encontrado na página do evento IBJJF');
+  return { id, date: parseEnDate(parseDocument(html).body?.textContent ?? '') };
+}
 
 export const ibjjfAdapter: ProviderAdapter = {
   id: 'ibjjf',
@@ -25,27 +45,36 @@ export const ibjjfAdapter: ProviderAdapter = {
   liveSchedule: true,
 
   parseUrl(url) {
+    if (/(^|\.)ibjjf\.com$/.test(url.hostname)) {
+      const id = url.pathname.match(/^\/events\/(\d{1,9})(\/|$)/)?.[1];
+      if (id) return { externalId: id };
+      const slug = url.pathname.match(/^\/events\/([^/]+)\/?$/)?.[1];
+      return slug && SLUG_RE.test(slug) ? { externalId: `slug:${slug}` } : null;
+    }
     if (!/(^|\.)bjjcompsystem\.com$/.test(url.hostname)) return null;
     const m = url.pathname.match(/\/tournaments\/(\d+)/) ?? url.search.match(/tournament_id=(\d+)/);
     return m ? { externalId: m[1]! } : null;
   },
 
   async fetchEvent(ref, http) {
+    const { id, date } = await resolveTournament(ref, http);
     const listDoc = parseDocument(await http.text(`${BASE}/tournaments`));
-    const option = listDoc.querySelector(`#tournament_id option[value="${ref.externalId}"]`);
-    const name = clean(option?.textContent) || `Torneio IBJJF ${ref.externalId}`;
+    const option = listDoc.querySelector(`#tournament_id option[value="${id}"]`);
+    const name = clean(option?.textContent) || `Torneio IBJJF ${id}`;
+    const context = { id };
 
-    const dayPath = findDayPath(listDoc, ref.externalId);
-    if (!dayPath) return { name, bracketsPublished: false, competitors: [] };
+    const dayPath = findDayPath(listDoc, id);
+    if (!dayPath) return { name, date, bracketsPublished: false, competitors: [], context };
 
     const dayDoc = parseDocument(await http.text(BASE + dayPath));
-    return { name, bracketsPublished: true, competitors: parseCompetitors(dayDoc) };
+    return { name, date, bracketsPublished: true, competitors: parseCompetitors(dayDoc), context };
   },
 
-  async fetchFights(ref: EventRef, competitor: Competitor, http: Http) {
-    if (!competitor.externalId) return [];
+  async fetchFights(ref: EventRef, competitor: Competitor, http: Http, context?: unknown) {
+    const id = (context as { id?: string } | undefined)?.id ?? ref.externalId;
+    if (!competitor.externalId || !ID_RE.test(id) || !ID_RE.test(competitor.externalId)) return [];
     const html = await http.text(
-      `${BASE}/tournaments/${ref.externalId}/tournament_days/by_competitor?competitor_id=${competitor.externalId}`,
+      `${BASE}/tournaments/${id}/tournament_days/by_competitor?competitor_id=${competitor.externalId}`,
     );
     return parseCompetitorFights(html, competitor.externalId);
   },

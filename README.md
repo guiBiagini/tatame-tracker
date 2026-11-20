@@ -18,7 +18,7 @@ Extensão de navegador que centraliza **categoria, horário e tatame** dos atlet
 
 | Plataforma | Federações / exemplos | Dados | Como integra |
 |---|---|---|---|
-| **IBJJF** (bjjcompsystem.com) | IBJJF, CBJJ | Inscritos, chave, **tatame, horário, luta, adversário, resultado** | HTML do servidor |
+| **IBJJF** (bjjcompsystem.com ou link do ibjjf.com) | IBJJF, CBJJ | Inscritos, chave, **tatame, horário, luta, adversário, resultado** | HTML do servidor |
 | **Meu Combate** | CBJJE (eventocbjje.com.br) e outras do mesmo sistema | Inscritos por categoria e aviso de chave publicada | API JSON pública |
 | **iLutas** | CBJJC, FMAS/PFBJJ, FCJJE, FEJJES, FJJCE… | Inscritos, chave (fase, adversário, tamanho) e **previsão de horário** pelo cronograma. A plataforma não publica tatame | HTML do servidor |
 

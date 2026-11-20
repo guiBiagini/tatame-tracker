@@ -69,3 +69,31 @@ describe('ibjjf.parseCompetitorFights', () => {
     expect(fights[0]).toMatchObject({ finished: true, won: true, opponent: 'Rival Um', fightNumber: '12' });
   });
 });
+
+describe('ibjjf: link do site ibjjf.com', () => {
+  it.each([
+    ['https://ibjjf.com/events/exemplo-international-open-2026', 'slug:exemplo-international-open-2026'],
+    ['https://ibjjf.com/events/9001/athletes-list-by-divisions', '9001'],
+    ['https://www.bjjcompsystem.com/tournaments/9001/categories', '9001'],
+  ])('%s', (url, id) => {
+    expect(ibjjfAdapter.parseUrl(new URL(url))).toEqual({ externalId: id });
+  });
+
+  it('rejeita caminhos que não são de evento', () => {
+    expect(ibjjfAdapter.parseUrl(new URL('https://ibjjf.com/2026-athletes-ranking'))).toBeNull();
+    expect(ibjjfAdapter.parseUrl(new URL('https://ibjjf.com/events/a%26b'))).toBeNull();
+  });
+
+  it('acha o torneio do bjjcompsystem na página do evento', async () => {
+    const http = fakeHttp({
+      'https://ibjjf.com/events/exemplo-open': fixture('ibjjf-site-evento.html'),
+      'https://www.bjjcompsystem.com/tournaments': fixture('ibjjf-tournaments.html'),
+      'https://www.bjjcompsystem.com/tournaments/9001/tournament_days/': fixture('ibjjf-day.html'),
+    });
+    const ref = { provider: 'ibjjf' as const, externalId: 'slug:exemplo-open', url: 'https://ibjjf.com/events/exemplo-open' };
+    const data = await ibjjfAdapter.fetchEvent(ref, http);
+    expect(data.context).toEqual({ id: '9001' });
+    expect(data.date).toBe('2026-11-21');
+    expect(data.name).toBe('Exemplo International Open IBJJF Jiu-Jitsu Championship 2026');
+  });
+});

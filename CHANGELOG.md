@@ -11,9 +11,12 @@ Todas as mudanças relevantes da extensão. Formato baseado em [Keep a Changelog
 - **iLutas: previsão de horário pelo cronograma**, exibida como "Previsão ~HH:MM" com a linha do cronograma usada. Não conta como luta agendada.
 - Notificações "adversário na chave" e "previsão de horário".
 - iLutas no dia do evento (lista de inscritos fora do ar): reaproveita a consulta anterior; sem ela, varre as chaves no máximo a cada 6 h.
+- Links do site da IBJJF (`ibjjf.com/events/...`) além do bjjcompsystem; a data do evento vem dessa página.
 - CI no GitHub Actions (tipos, testes e build), modelos de issue e de pull request, guia de contribuição.
 
 ### Corrigido
+- Eventos IBJJF sem data (o bjjcompsystem não publica): a data passa a vir do site da IBJJF ou da primeira luta. Antes, sem data, a extensão consultava só a cada 6 h mesmo no dia das lutas.
+- Timeout ou queda de conexão agora geram nova tentativa, em vez de falhar a consulta inteira.
 - Acentos corrompidos em páginas que não usam UTF-8 (checagem do iLutas, em ISO-8859-1): o texto agora é decodificado pelo charset informado pelo site.
 
 ## [0.1.0] - 2026-11-14

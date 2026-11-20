@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { resolveUrl } from '../src/adapters';
 import { decodeBody } from '../src/core/adapter';
-import { parseIbjjfWhen, parsePtDate } from '../src/core/dates';
+import { parseEnDate, parseIbjjfWhen, parsePtDate } from '../src/core/dates';
 import { diffSnapshots } from '../src/core/diff';
 import type { Athlete, EventSnapshot, TrackedEvent } from '../src/core/model';
 import { isDue, refreshIntervalMinutes } from '../src/core/schedule';
@@ -171,5 +171,15 @@ describe('chave e previsão (sem tatame)', () => {
 
   it('resumo marca a previsão', () => {
     expect(buildSummary([snap([bracketFight])], athletes)).toContain('previsão ~15:00 · Semifinal · vs Rival Um · chave de 4');
+  });
+});
+
+describe('data em inglês (site da IBJJF)', () => {
+  it.each([
+    ['November 21st - 22nd, 2026', '2026-11-21'],
+    ['Dates: May 3rd, 2027 (Saturday)', '2027-05-03'],
+    ['August 30th - September 1st, 2026', '2026-08-30'],
+  ])('%s → %s', (text, date) => {
+    expect(parseEnDate(text)).toBe(date);
   });
 });

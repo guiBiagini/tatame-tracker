@@ -95,11 +95,18 @@ export async function syncEvent(
     }
   }
 
+  // Plataformas sem data publicada (bjjcompsystem): usa a da primeira luta ou a já conhecida.
+  // Sem data, a frequência de consulta não acelera no dia do evento.
+  const firstFightDate = entries
+    .flatMap((e) => e.fights.map((f) => f.startsAt?.slice(0, 10)))
+    .filter((d): d is string => !!d)
+    .sort()[0];
+
   return {
     eventId: event.id,
     fetchedAt: new Date().toISOString(),
     name: data.name,
-    date: data.date,
+    date: data.date ?? firstFightDate ?? previous?.date,
     bracketsPublished: data.bracketsPublished,
     entries,
     ...(data.state && { state: data.state }),

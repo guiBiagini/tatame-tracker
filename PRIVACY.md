@@ -24,7 +24,7 @@ Todos os dados acima ficam armazenados **localmente no seu navegador** (`chrome.
 
 A extensão faz requisições somente para as plataformas de campeonato que ela suporta, e apenas para os eventos que você cadastrou:
 
-- `www.bjjcompsystem.com` (IBJJF)
+- `www.bjjcompsystem.com` e `ibjjf.com` (IBJJF)
 - `api.meucombate.com.br` (Meu Combate / CBJJE)
 - `www.ilutas.com.br` (iLutas)
 

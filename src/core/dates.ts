@@ -28,6 +28,21 @@ export function parsePtDate(text: string): string | undefined {
 }
 
 /** Epoch em ms → "YYYY-MM-DD" no fuso informado. */
+const EN_MONTHS = [
+  'january', 'february', 'march', 'april', 'may', 'june',
+  'july', 'august', 'september', 'october', 'november', 'december',
+];
+
+/** Primeira data em inglês do texto: "November 21st - 22nd, 2026" → "2026-11-21". */
+export function parseEnDate(text: string): string | undefined {
+  const m = text.match(
+    /\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s*[-–]\s*(?:[A-Za-z]+\s+)?\d{1,2}(?:st|nd|rd|th)?)?,?\s+(\d{4})\b/i,
+  );
+  if (!m) return undefined;
+  const month = EN_MONTHS.indexOf(m[1]!.toLowerCase()) + 1;
+  return `${m[3]}-${String(month).padStart(2, '0')}-${m[2]!.padStart(2, '0')}`;
+}
+
 export function epochToDate(ms: number, timeZone = 'America/Sao_Paulo'): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone }).format(new Date(ms));
 }

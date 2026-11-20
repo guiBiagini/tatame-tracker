@@ -11,6 +11,7 @@ export default defineConfig({
     // Só os hosts que os adaptadores consultam. Novas plataformas entram aqui.
     host_permissions: [
       'https://www.bjjcompsystem.com/*',
+      'https://ibjjf.com/*',
       'https://api.meucombate.com.br/*',
       'https://www.ilutas.com.br/*',
     ],
