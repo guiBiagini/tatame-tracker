@@ -188,6 +188,10 @@ textarea {
 .fight .mat {
   font-weight: 600;
   color: var(--ok);
+  white-space: nowrap; /* "Tatame 8" não quebra em duas linhas */
+}
+.fight .time {
+  white-space: nowrap;
 }
 /* Previsão pelo cronograma (iLutas): não é horário confirmado. */
 .fight .mat.estimated {
