@@ -19,7 +19,7 @@ Extensão de navegador que centraliza **categoria, horário e tatame** dos atlet
 | Plataforma | Federações / exemplos | Dados | Como integra |
 |---|---|---|---|
 | **IBJJF** (bjjcompsystem.com ou link do ibjjf.com) | IBJJF, CBJJ | Inscritos, chave, **tatame, horário, luta, adversário, resultado** | HTML do servidor |
-| **Meu Combate** | CBJJE (eventocbjje.com.br) e outras do mesmo sistema | Inscritos por categoria e aviso de chave publicada | API JSON pública |
+| **Meu Combate** | CBJJE (eventocbjje.com.br) e outras do mesmo sistema | Inscritos, chave, **área, horário previsto, luta, adversário e resultado** | API JSON pública |
 | **iLutas** | CBJJC, FMAS/PFBJJ, FCJJE, FEJJES, FJJCE… | Inscritos, chave (fase, adversário, tamanho) e **previsão de horário** pelo cronograma. A plataforma não publica tatame | HTML do servidor |
 
 Planejadas: PDFs do Google Drive (BJJ Storm, Genesis Esportes), Smoothcomp (via leitura da página aberta pelo usuário) e FJJEMG/LMJJ.
@@ -39,7 +39,7 @@ A frequência de consulta se adapta à data do evento:
 | Mais de 7 dias antes | 1× por dia |
 | 2 a 7 dias antes | a cada 3 h |
 | Véspera | a cada 1 h |
-| Dia do evento | a cada 5 min (IBJJF) / 1 h (demais) |
+| Dia do evento | a cada 5 min (IBJJF e Meu Combate) / 1 h (iLutas) |
 | Dia seguinte | a cada 6 h (resultados) |
 | Depois disso | para de consultar |
 

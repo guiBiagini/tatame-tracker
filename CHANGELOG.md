@@ -7,6 +7,7 @@ Todas as mudanças relevantes da extensão. Formato baseado em [Keep a Changelog
 ## [0.2.0] - 2026-11-15
 
 ### Adicionado
+- **Meu Combate/CBJJE: área, horário previsto, fase, adversário e resultado** de cada luta (antes mostrava só "chave publicada"). No dia do evento, consulta a cada 5 min.
 - **iLutas: chaves.** Fase, primeiro adversário (com equipe) e tamanho da chave de cada atleta, abrindo só as chaves das categorias dele. Encontra também categorias juntadas pelo organizador.
 - **iLutas: previsão de horário pelo cronograma**, exibida como "Previsão ~HH:MM" com a linha do cronograma usada. Não conta como luta agendada.
 - Notificações "adversário na chave" e "previsão de horário".

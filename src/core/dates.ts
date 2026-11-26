@@ -27,7 +27,6 @@ export function parsePtDate(text: string): string | undefined {
   return `${m[3]}-${pad(month + 1)}-${pad(Number(m[1]))}`;
 }
 
-/** Epoch em ms → "YYYY-MM-DD" no fuso informado. */
 const EN_MONTHS = [
   'january', 'february', 'march', 'april', 'may', 'june',
   'july', 'august', 'september', 'october', 'november', 'december',
@@ -43,8 +42,27 @@ export function parseEnDate(text: string): string | undefined {
   return `${m[3]}-${String(month).padStart(2, '0')}-${m[2]!.padStart(2, '0')}`;
 }
 
+/** Epoch em ms → "YYYY-MM-DD" no fuso informado. */
 export function epochToDate(ms: number, timeZone = 'America/Sao_Paulo'): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone }).format(new Date(ms));
+}
+
+/** Epoch em ms → "YYYY-MM-DDTHH:mm" (hora local do evento, sem fuso). */
+export function epochToLocal(ms: number, timeZone = 'America/Sao_Paulo'): string {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-CA', {
+      timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+    })
+      .formatToParts(new Date(ms))
+      .map((p) => [p.type, p.value]),
+  );
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
 }
 
 /**
